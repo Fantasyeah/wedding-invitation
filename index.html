@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#123f39">
+  <meta name="description" content="Van & Spot 的复古街机婚礼邀请函">
+  <meta property="og:title" content="Van & Spot｜婚礼邀请函">
+  <meta property="og:description" content="接受一场关于爱与相聚的特别委托。">
+  <title>Van & Spot 婚礼邀请函</title>
+  <style>
+    @font-face {
+      font-family: 'Cubic11';
+      src: url('./Cubic_11_1.010_R.ttf') format('truetype');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      font-family: 'Cubic11', monospace, sans-serif;
+    }
+
+    /* 街机外壳容器：锁定无摇杆背景图的原始比例 (938 : 1677) */
+    .arcade-wrapper {
+      position: relative;
+      width: min(100vw, 440px, calc(100dvh * 938 / 1677));
+      max-width: 440px;
+      aspect-ratio: 938 / 1677;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .arcade-machine {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: url('./arcade_frame_without_joystick.png') no-repeat center center;
+      background-size: 100% 100%;
+      overflow: hidden;
+      container-type: inline-size;
+    }
+
+    /* 街机屏幕内部实际视口：按新背景的白色内屏重新标定 */
+    .screen-viewport {
+      position: absolute;
+      top: 40.3%;
+      left: 16.0%;
+      width: 70.3%;
+      height: 22.7%;
+      border-radius: 2.27cqw;
+      overflow: hidden;
+      background: url('./screen_bg_start_sky.png') no-repeat center bottom;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      /* 屏幕仅负责展示，所有操作由机台摇杆和实体按键完成 */
+      pointer-events: none;
+    }
+
+    /* 屏幕像素绿地/白云背景叠层 */
+    .screen-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('./screen_bg_start_sky.png') no-repeat center top;
+      background-size: cover;
+      z-index: 1;
+    }
+
+    /* 顶部 HUD 状态栏 */
+    .screen-hud {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2.27cqw 3.18cqw 0;
+    }
+
+    .hearts-row {
+      display: flex;
+      gap: 1.14cqw;
+      align-items: center;
+    }
+
+    .hud-heart {
+      width: 4.1cqw;
+      height: 3.64cqw;
+      background: url('./heart_red.png') no-repeat left center;
+      background-size: auto 100%;
+    }
+
+    .hud-counter {
+      display: flex;
+      align-items: center;
+      gap: 0.91cqw;
+      font-size: 3.64cqw;
+      color: #1a252f;
+      font-weight: bold;
+    }
+
+    .hud-ball {
+      width: 3.64cqw;
+      height: 3.64cqw;
+      background: url('./heart_red.png') no-repeat right center;
+      background-size: auto 100%;
+    }
+
+    /* 屏幕核心内容区 */
+    .screen-content {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: -1.36cqw;
+    }
+
+    /* 第二阶段：相册盒子选择 */
+    .album-select {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      color: #1a252f;
+      overflow: hidden;
+    }
+
+    .album-select__hint {
+      position: absolute;
+      right: 1.36cqw;
+      bottom: 0.23cqw;
+      margin: 0;
+      font-size: 1.82cqw;
+      font-weight: bold;
+      color: #355650;
+      text-align: center;
+    }
+
+    .album-carousel {
+      position: relative;
+      width: 100%;
+      height: 79%;
+      overflow: hidden;
+    }
+
+    .album-card {
+      position: absolute;
+      top: 51%;
+      left: 50%;
+      width: min(38%, 25cqw);
+      max-width: none;
+      min-width: 0;
+      aspect-ratio: 0.73;
+      padding: 0;
+      border: 0;
+      font-family: inherit;
+      background: transparent;
+      box-shadow: none;
+      cursor: default;
+      opacity: 0.55;
+      transform: translate(-50%, -50%) translateX(calc(var(--offset) * 92%)) scale(0.62);
+      transition: transform 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s, filter 0.2s;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    .album-card.is-active {
+      opacity: 1;
+      filter: saturate(1.08);
+      transform: translate(-50%, -50%) translateX(calc(var(--offset) * 92%)) scale(1);
+      z-index: 3;
+    }
+
+    .album-card.is-active::before,
+    .album-card.is-active::after {
+      position: absolute;
+      color: #ffd800;
+      font-size: 3.86cqw;
+      line-height: 1;
+      text-shadow: 0.23cqw 0.23cqw 0 #7a5b00;
+      animation: star-twinkle 0.7s infinite alternate;
+      content: '✦';
+    }
+
+    .album-card.is-active::before { top: -3.18cqw; left: -3.18cqw; }
+    .album-card.is-active::after { right: -3.18cqw; bottom: -3.18cqw; animation-delay: 0.28s; }
+
+    @keyframes star-twinkle {
+      from { transform: scale(0.7); opacity: 0.55; }
+      to { transform: scale(1.15); opacity: 1; }
+    }
+
+    .album-card__frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .album-card__photo {
+      width: 80%;
+      height: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      color: rgba(255,255,255,0.88);
+      font-size: 2.27cqw;
+      text-shadow: 0.23cqw 0.23cqw 0 rgba(0,0,0,0.65);
+      background-color: #173f35;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .album-card--one .album-card__photo { background-image: url('./df.png'); }
+    .album-card--two .album-card__photo { background-image: url('./xxy.png'); }
+    .album-card--three .album-card__photo { background-image: url('./3.png'); }
+
+    .album-box-nav {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.95cqw;
+      height: 6.59cqw;
+      margin-bottom: 1.36cqw;
+    }
+
+    .album-box-arrow {
+      color: #ffd447;
+      font-size: 5.68cqw;
+      line-height: 1;
+      text-shadow: 0.45cqw 0.45cqw 0 #33463e, -0.23cqw -0.23cqw 0 #33463e;
+    }
+
+    .album-box-label {
+      min-width: 20.68cqw;
+      padding: 0.91cqw 1.82cqw;
+      border: 0.45cqw solid #3b3a26;
+      color: #151714;
+      background: #ffe1a0;
+      box-shadow: 0.45cqw 0.45cqw 0 #76683f;
+      font-size: 2.95cqw;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .title-start {
+      font-size: 7.27cqw;
+      color: #ffd800;
+      text-shadow: 
+        0.45cqw 0.45cqw 0 #b38600, 
+        -0.45cqw -0.45cqw 0 #000, 
+        0.45cqw -0.45cqw 0 #000, 
+        -0.45cqw 0.45cqw 0 #000, 
+        0 0.68cqw 0 #000;
+      letter-spacing: 0.45cqw;
+      animation: pixel-bounce 1.1s infinite alternate ease-in-out;
+    }
+
+    @keyframes pixel-bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-0.91cqw); }
+    }
+
+    .subtitle-ready {
+      font-size: 2.95cqw;
+      color: #2c3e50;
+      margin-top: 0.91cqw;
+      margin-bottom: 3.18cqw;
+      letter-spacing: 0.23cqw;
+      font-weight: bold;
+    }
+
+    .options-container {
+      display: flex;
+      gap: 8.18cqw;
+      align-items: center;
+      position: relative;
+    }
+
+    .option-btn {
+      font-size: 4.1cqw;
+      color: #4a6572;
+      cursor: pointer;
+      padding: 0.91cqw 1.36cqw;
+      position: relative;
+      font-weight: bold;
+      transition: color 0.1s;
+    }
+
+    .option-btn.active {
+      color: #112233;
+    }
+
+    /* 像素黄色指示箭头（纯 CSS 像素级精确绘制） */
+    .pixel-cursor {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: 1.36cqw solid transparent;
+      border-bottom: 1.36cqw solid transparent;
+      border-left: 2.27cqw solid #f1c40f;
+      filter: drop-shadow(0.23cqw 0.23cqw 0 #8e6800);
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: blink-arrow 0.6s infinite alternate;
+    }
+
+    @keyframes blink-arrow {
+      from { transform: translateX(0); }
+      to { transform: translateX(-0.68cqw); }
+    }
+
+    /* 彩蛋提示气泡 */
+    .easter-egg-toast {
+      position: absolute;
+      bottom: 2.73cqw;
+      background: #ff4757;
+      color: #ffffff;
+      padding: 1.14cqw 2.73cqw;
+      border-radius: 0.91cqw;
+      border: 0.45cqw solid #ffffff;
+      font-size: 2.5cqw;
+      box-shadow: 0 0.91cqw 1.82cqw rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(2.27cqw) scale(0.9);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .easter-egg-toast.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      animation: bubble-shake 0.35s ease-in-out;
+    }
+
+    @keyframes bubble-shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-0.91cqw); }
+      40%, 80% { transform: translateX(0.91cqw); }
+    }
+
+    /* 实体摇杆热区 (覆盖原画摇杆) */
+    .joystick-hitbox {
+      position: absolute;
+      top: 59.5%;
+      left: 17%;
+      width: 20%;
+      height: 14%;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .joystick-interactive {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('./joystick_base.png') no-repeat center center;
+      background-size: contain;
+      transform-origin: 50% 85%;
+      transition: transform 0.1s ease-out;
+    }
+
+    /* 实体按键热区 (覆盖原画红色按钮) */
+    .button-a-hitbox {
+      position: absolute;
+      top: 68.0%;
+      left: 56%;
+      width: 14%;
+      height: 7%;
+      cursor: pointer;
+      z-index: 20;
+      border-radius: 50%;
+    }
+
+    .button-b-hitbox {
+      position: absolute;
+      top: 68.0%;
+      left: 70%;
+      width: 14%;
+      height: 7%;
+      cursor: pointer;
+      z-index: 20;
+      border-radius: 50%;
+    }
+
+    /* 按钮下压光影反馈 */
+    .btn-press-effect {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 45% 35%, rgba(255,255,255,0.3), rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.32));
+      box-shadow: 0 0.68cqw 0 rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.08s ease-out, opacity 0.08s ease-out, box-shadow 0.08s ease-out;
+    }
+
+    .btn-press-effect.pressed {
+      opacity: 1;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+      transform: translateY(0.91cqw) scale(0.9);
+    }
+
+    /* 转场全屏像素帘 */
+    .transition-curtain {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #000;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .transition-curtain.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* 最终转场：街机屏幕推进后，请柬从中央横向展开 */
+    body.transition-running {
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    body.transition-running .arcade-wrapper {
+      pointer-events: none;
+    }
+
+    .screen-transition-portal {
+      position: fixed !important;
+      margin: 0 !important;
+      z-index: 1000;
+      pointer-events: none;
+      transform-origin: 0 0;
+      will-change: transform, opacity, filter;
+      contain: layout paint;
+    }
+
+    .invitation-page.release-opening {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: block;
+      width: min(100%, 480px);
+      height: 100dvh;
+      margin: auto;
+      overflow: hidden;
+      opacity: 1;
+      clip-path: inset(0 50% 0 50%);
+      will-change: clip-path, opacity;
+    }
+
+    /* 正式请柬：完成街机任务后展开的移动端长页面 */
+    .invitation-page { display: none; width: min(100%, 480px); height: 100dvh; margin: auto; overflow: hidden; background: #10131e; }
+    body.release-open { display: block; overflow: hidden; background: #10131e; }
+    body.release-open .arcade-wrapper { display: none; }
+    body.release-open .invitation-page { display: block; }
+    .stardew-invitation-frame { display: block; width: 100%; height: 100%; border: 0; background: #8fc56a; }
+    .release-hud { position: sticky; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; min-height: 42px; padding: 8px 14px; color: #fff4cf; background: rgba(12,47,45,.96); border-bottom: 2px solid #0a2321; font-size: 11px; }
+    .release-hud b { color: #ffd447; }
+    .release-section { padding: 52px 20px; }
+    .release-section--mint { background: #c7ecd6; }
+    .release-section--deep { color: #f8f0d1; background: #173e39; }
+    .release-section--gold { background: #f6e5b6; }
+    .release-kicker { margin: 0 0 8px; color: #39816e; font-size: 11px; }
+    .release-section--deep .release-kicker { color: #a9d5bf; }
+    .release-title { margin: 0 0 18px; color: #173e39; font-size: 26px; line-height: 1.25; }
+    .release-section--deep .release-title { color: #fff5d4; }
+    .release-card { padding: 18px; border: 3px solid #18473f; background: #fff4cf; box-shadow: 5px 5px 0 #1d6155; }
+    .release-card p { margin: 0; font-size: 14px; line-height: 1.9; }
+    .release-info { display: grid; gap: 10px; margin-top: 18px; }
+    .release-info div { padding: 10px; border-left: 5px solid #1c806a; background: #fffbe9; }
+    .release-info small { display: block; margin-bottom: 4px; color: #527a6f; font-size: 10px; }
+    .release-info b { font-size: 13px; line-height: 1.5; }
+    .release-album-track { display: flex; gap: 14px; overflow-x: auto; padding: 8px 4px 16px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .release-album-track::-webkit-scrollbar { display: none; }
+    .release-album { flex: 0 0 78%; padding: 9px 9px 13px; border: 4px solid #fff; background: #0d6f32; box-shadow: 4px 5px 0 #1d453d; scroll-snap-align: center; }
+    .release-album.is-selected { outline: 4px solid #ffd447; }
+    .release-album img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #1e5447; }
+    .release-album figcaption { margin-top: 10px; padding: 8px; text-align: center; color: #1d231b; background: #ffe39c; border: 2px solid #5e5735; font-size: 14px; }
+    .release-note { margin: 16px 0 0; text-align: center; color: #315d52; font-size: 11px; }
+    .release-timeline { display: grid; gap: 10px; }
+    .release-timeline article { display: grid; grid-template-columns: 66px 1fr; gap: 12px; padding: 13px; border: 2px solid #6bb698; background: #20564d; }
+    .release-timeline time { color: #ffd447; font-size: 16px; }
+    .release-timeline b { display: block; margin-bottom: 5px; color: #fff8d7; font-size: 14px; }
+    .release-timeline span { color: #c7ead5; font-size: 11px; line-height: 1.5; }
+    .release-map { min-height: 180px; display: grid; place-items: center; border: 3px solid #18473f; background-color: #8bc9a7; background-image: linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px); background-size: 24px 24px; }
+    .release-pin { display: grid; place-items: center; width: 62px; height: 62px; border: 4px solid #fff4cf; border-radius: 50%; color: #fff; background: #f16657; box-shadow: 0 0 0 5px rgba(241,102,87,.27); font-size: 28px; }
+    .release-map-title { margin: 16px 0 8px; font-size: 17px; }
+    .release-map-link { display: block; margin-top: 15px; padding: 12px; color: #fff8db; background: #267864; text-align: center; text-decoration: none; }
+    .release-privacy { margin: 0 0 15px !important; color: #5f6654; font-size: 11px !important; line-height: 1.6 !important; }
+    .release-form { display: grid; gap: 13px; }
+    .release-form label { display: grid; gap: 6px; font-size: 12px; }
+    .release-form input, .release-form select, .release-form textarea { width: 100%; padding: 11px; border: 2px solid #315d52; border-radius: 0; color: #173e39; background: #fffdf3; }
+    .release-form textarea { resize: vertical; }
+    .release-submit { padding: 13px; border: 3px solid #7d3c32; color: #fff; background: #f16657; box-shadow: 0 3px 0 #702d29; }
+    .release-status { min-height: 18px; margin: 0; color: #267864; font-size: 11px; }
+    .release-ending { min-height: 55dvh; display: grid; place-items: center; padding: 60px 20px calc(40px + env(safe-area-inset-bottom)); color: #fff4cf; background: #123e39; text-align: center; }
+    .release-ending .release-title { color: #fff4cf; font-size: 31px; }
+    .release-ending p { color: #bfe6d2; font-size: 13px; line-height: 1.8; }
+    .release-footer { padding: 18px; color: #a9d5bf; background: #0b2624; text-align: center; font-size: 10px; }
+    @media (max-width: 360px) { .release-section { padding: 42px 16px; } }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      .invitation-page.release-opening { clip-path: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="arcade-wrapper">
+    <div class="arcade-machine">
+      <!-- 街机屏幕视口 -->
+      <div class="screen-viewport">
+        <div class="screen-bg"></div>
+
+        <!-- 顶部 HUD (3颗红心 + ×3足球) -->
+        <div class="screen-hud">
+          <div class="hearts-row">
+            <div class="hud-heart"></div>
+            <div class="hud-heart"></div>
+            <div class="hud-heart"></div>
+          </div>
+          <div class="hud-counter">
+            <span>×3</span>
+            <div class="hud-ball"></div>
+          </div>
+        </div>
+
+        <!-- START 界面文字与交互项 -->
+        <div class="screen-content" id="screenContent">
+          <div class="title-start">START</div>
+          <div class="subtitle-ready">ARE YOU READY?</div>
+
+          <div class="options-container">
+            <div class="pixel-cursor" id="arrowCursor"></div>
+            <div class="option-btn active" id="btnYes">YES</div>
+            <div class="option-btn" id="btnNo">NO</div>
+          </div>
+
+          <div class="easter-egg-toast" id="eggToast">只能 YES or YES 哦~ 💖</div>
+        </div>
+
+        <!-- 转场遮罩 -->
+        <div class="transition-curtain" id="transCurtain"></div>
+      </div>
+
+      <!-- 可操控的摇杆 -->
+      <div class="joystick-hitbox" id="joyZone">
+        <div class="joystick-interactive" id="joyStick"></div>
+      </div>
+
+      <!-- 实体红按键 A / B -->
+      <div class="button-a-hitbox" id="hitA" role="button" aria-label="确认选择">
+        <div class="btn-press-effect" id="fxA"></div>
+      </div>
+      <div class="button-b-hitbox" id="hitB" role="button" aria-label="切换选项">
+        <div class="btn-press-effect" id="fxB"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="invitation-page" id="invitationPage" hidden>
+    <iframe
+      class="stardew-invitation-frame"
+      id="stardewInvitationFrame"
+      src="./stardew-invitation/index.html"
+      title="星露谷像素风婚礼邀请函"
+      loading="eager"
+    ></iframe>
+  </main>
+
+  <script>
+    // 8-bit 经典复古合成音效
+    class RetroAudio {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      }
+      playMove() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(660, this.ctx.currentTime + 0.04);
+        g.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+        osc.connect(g); g.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+      }
+      playError() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.2);
+        g.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+        osc.connect(g); g.connect(this.ctx.destination);
+        osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+      }
+      playCoin() {
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(987.77, now);
+        osc.frequency.setValueAtTime(1318.51, now + 0.08);
+        g.gain.setValueAtTime(0.2, now);
+        g.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        osc.connect(g); g.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.35);
+      }
+    }
+
+    const audio = new RetroAudio();
+
+    // 发布前只需在此替换真实信息；请柬子页面会自动读取这份配置。
+    const invitation = {
+      groom: '董凡',
+      bride: '徐心宇',
+      weddingDate: '2026-11-14T00:00:00+08:00',
+      dateDot: '2026.11.14',
+      dateCn: '2026.11.14（周六）',
+      calendarMonth: ' November',
+      calendarDay: '14',
+      calendarYear: '2026',
+      venue: '苍南县肯迪文大酒店',
+      venueShort: '婚礼场地',
+      navigationUrl: 'https://www.amap.com/place/B0JKDK4JHC',
+      message: '春去秋来，我们决定成为彼此漫长旅程中最坚定的同行者。我们期待陪伴我们度过生命中每一段珍贵岁月的你能够到现场见证。',
+      dressCode: '白色、蓝色、粉色、卡其色色系',
+      seasonLine: '良辰吉日 · 天气晴',
+      publicTransit: '高铁到达“苍南站”后打车前往酒店',
+      driving: '导航“苍南县比音勒芬广场停车场”',
+      questMessage: '婚礼当日，我们准备了很久，迎接生命中最重要的亲朋好友。',
+      blessing: '春风暖，遇良辰。\n喝满你们的喜酒，听完一年的花。\n我们相逢这一天，把最好的故事变成回忆。',
+      schedule: [
+        { label: '签到', time: '14:58', description: '领取今日任务，与老朋友相见' },
+        { label: '草坪仪式', time: '15:28', description: '见证拥抱、誓言与交换戒指' },
+        { label: '合影', time: '16:08', description: '保存这一份快乐存档' },
+        { label: '喜宴', time: '17:08', description: '共享一场丰盛的宴席' }
+      ]
+    };
+
+    let curChoice = 0; // 0: YES, 1: NO
+    const btnYes = document.getElementById('btnYes');
+    const btnNo = document.getElementById('btnNo');
+    const arrow = document.getElementById('arrowCursor');
+    const eggToast = document.getElementById('eggToast');
+    const transCurtain = document.getElementById('transCurtain');
+    const screenContent = document.getElementById('screenContent');
+    const joyStick = document.getElementById('joyStick');
+    const fxA = document.getElementById('fxA');
+    const fxB = document.getElementById('fxB');
+    let eggTimer = null;
+    let isTransitioning = false;
+    let screenMode = 'start';
+    let albumIndex = 0;
+    const albums = [
+      { box: '董凡', name: '', tag: 'MEMORIES', theme: 'one' },
+      { box: '徐心宇', name: '', tag: 'MOMENTS', theme: 'two' },
+      { box: 'OUR STORY', name: '', tag: 'FOREVER', theme: 'three' }
+    ];
+
+    function renderArrow() {
+      const activeYes = screenContent.querySelector('#btnYes');
+      const activeNo = screenContent.querySelector('#btnNo');
+      const activeArrow = screenContent.querySelector('#arrowCursor');
+      if (!activeYes || !activeNo || !activeArrow) return;
+      const target = curChoice === 0 ? activeYes : activeNo;
+      const tRect = target.getBoundingClientRect();
+      const pRect = target.parentElement.getBoundingClientRect();
+      activeArrow.style.left = (tRect.left - pRect.left - 16) + 'px';
+      activeArrow.style.top = (tRect.top - pRect.top + (tRect.height / 2) - 6) + 'px';
+
+      activeYes.classList.toggle('active', curChoice === 0);
+      activeNo.classList.toggle('active', curChoice === 1);
+    }
+
+    window.addEventListener('load', () => setTimeout(renderArrow, 60));
+    window.addEventListener('resize', renderArrow);
+
+    function switchChoice(idx) {
+      if (curChoice !== idx) {
+        curChoice = idx;
+        audio.playMove();
+        renderArrow();
+      }
+    }
+
+    function renderAlbums() {
+      const cards = document.querySelectorAll('.album-card');
+      cards.forEach((card, index) => {
+        let offset = index - albumIndex;
+        if (offset > 1) offset -= albums.length;
+        if (offset < -1) offset += albums.length;
+        card.style.setProperty('--offset', offset);
+        card.classList.toggle('is-active', index === albumIndex);
+        card.setAttribute('aria-current', index === albumIndex ? 'true' : 'false');
+      });
+      const label = document.getElementById('albumBoxLabel');
+      if (label) label.textContent = albums[albumIndex].box;
+    }
+
+    function switchAlbum(direction) {
+      if (screenMode !== 'albums') return;
+      albumIndex = (albumIndex + direction + albums.length) % albums.length;
+      audio.playMove();
+      renderAlbums();
+    }
+
+    function chooseAlbum() {
+      if (screenMode !== 'albums') return;
+      const album = albums[albumIndex];
+      audio.playCoin();
+      const hint = document.getElementById('albumHint');
+      hint.textContent = `已选择 ${album.box} · ${album.name}`;
+      document.querySelector('.album-card.is-active').animate(
+        [{ transform: 'translate(-50%, -50%) translateX(0) scale(1)' }, { transform: 'translate(-50%, -50%) translateX(0) scale(1.08)' }, { transform: 'translate(-50%, -50%) translateX(0) scale(1)' }],
+        { duration: 260, easing: 'steps(2, end)' }
+      );
+      setTimeout(loadInvitationConfirm, 290);
+    }
+
+    function loadInvitationConfirm() {
+      screenMode = 'invite-confirm';
+      curChoice = 0;
+      screenContent.innerHTML = `
+        <div class="title-start">INVITE?</div>
+        <div class="subtitle-ready">接受婚礼邀请吗？</div>
+        <div class="options-container">
+          <div class="pixel-cursor" id="arrowCursor"></div>
+          <div class="option-btn active" id="btnYes">YES</div>
+          <div class="option-btn" id="btnNo">NO</div>
+        </div>
+        <div class="easter-egg-toast" id="eggToast">只能 YES or YES 哦~ 💖</div>`;
+      requestAnimationFrame(renderArrow);
+    }
+
+    async function openInvitation() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      screenMode = 'transition';
+      audio.playCoin();
+
+      const page = document.getElementById('invitationPage');
+      const wrapper = document.querySelector('.arcade-wrapper');
+      const screen = document.querySelector('.screen-viewport');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      document.body.classList.add('transition-running');
+      page.hidden = false;
+      page.classList.add('release-opening');
+      syncInvitationFrame();
+
+      if (reducedMotion || typeof wrapper.animate !== 'function' || typeof page.animate !== 'function') {
+        page.style.clipPath = 'none';
+        page.style.opacity = '0';
+        if (typeof page.animate !== 'function') {
+          finishInvitationTransition(null, wrapper, page);
+          return;
+        }
+        try {
+          await page.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: 180,
+            easing: 'ease-out',
+            fill: 'forwards'
+          }).finished;
+        } catch (_) {}
+        finishInvitationTransition(null, wrapper, page);
+        return;
+      }
+
+      let portal;
+      try {
+        portal = createScreenPortal(wrapper);
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const screenRect = screen.getBoundingClientRect();
+        const relativeScreenX = screenRect.left - wrapperRect.left;
+        const relativeScreenY = screenRect.top - wrapperRect.top;
+        const scale = window.innerWidth / screenRect.width;
+        const targetScreenTop = (window.innerHeight - screenRect.height * scale) / 2;
+        const targetX = -wrapperRect.left - relativeScreenX * scale;
+        const targetY = targetScreenTop - wrapperRect.top - relativeScreenY * scale;
+        const pulseScale = 1.015;
+        const pulseX = -(relativeScreenX + screenRect.width / 2) * (pulseScale - 1);
+        const pulseY = -(relativeScreenY + screenRect.height / 2) * (pulseScale - 1);
+
+        wrapper.style.visibility = 'hidden';
+        await portal.animate([
+          { transform: 'translate(0, 0) scale(1)', filter: 'brightness(1)' },
+          { offset: 0.2, transform: `translate(${pulseX}px, ${pulseY}px) scale(${pulseScale})`, filter: 'brightness(1.09)' },
+          { transform: `translate(${targetX}px, ${targetY}px) scale(${scale})`, filter: 'brightness(1.04)' }
+        ], {
+          duration: 780,
+          easing: 'cubic-bezier(.65, 0, .2, 1)',
+          fill: 'forwards'
+        }).finished;
+
+        const reveal = page.animate([
+          { clipPath: 'inset(0 50% 0 50%)' },
+          { clipPath: 'inset(0 0 0 0)' }
+        ], {
+          duration: 340,
+          easing: 'cubic-bezier(.22, .8, .25, 1)',
+          fill: 'forwards'
+        });
+        const portalFade = portal.animate([
+          { opacity: 1, filter: 'brightness(1.04)' },
+          { opacity: 0, filter: 'brightness(1.18)' }
+        ], {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        });
+        await Promise.all([reveal.finished, portalFade.finished]);
+        finishInvitationTransition(portal, wrapper, page);
+      } catch (error) {
+        console.warn('Invitation transition fell back to the final state.', error);
+        finishInvitationTransition(portal, wrapper, page);
+      }
+    }
+
+    function createScreenPortal(wrapper) {
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const portal = wrapper.cloneNode(true);
+      portal.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
+      portal.removeAttribute('id');
+      portal.classList.add('screen-transition-portal');
+      Object.assign(portal.style, {
+        left: `${wrapperRect.left}px`,
+        top: `${wrapperRect.top}px`,
+        width: `${wrapperRect.width}px`,
+        height: `${wrapperRect.height}px`
+      });
+      document.body.appendChild(portal);
+      return portal;
+    }
+
+    function finishInvitationTransition(portal, wrapper, page) {
+      portal?.remove();
+      wrapper.style.visibility = '';
+      page.style.opacity = '';
+      page.style.clipPath = '';
+      page.classList.remove('release-opening');
+      document.body.classList.remove('transition-running');
+      document.body.classList.add('release-open');
+      window.scrollTo(0, 0);
+      syncInvitationFrame();
+      stardewInvitationFrame.contentWindow?.postMessage({ type: 'scroll-top' }, '*');
+    }
+
+    const stardewInvitationFrame = document.getElementById('stardewInvitationFrame');
+
+    function syncInvitationFrame() {
+      stardewInvitationFrame.contentWindow?.postMessage({ type: 'wedding-config', config: invitation }, '*');
+    }
+
+    stardewInvitationFrame.addEventListener('load', syncInvitationFrame);
+    window.addEventListener('message', (event) => {
+      if (event.source === stardewInvitationFrame.contentWindow && event.data?.type === 'stardew-invitation-ready') syncInvitationFrame();
+    });
+
+    function loadAlbumSelector() {
+      screenMode = 'albums';
+      screenContent.innerHTML = `
+        <section class="album-select" aria-label="相册盒子选择">
+          <div class="album-carousel" id="albumCarousel">
+            ${albums.map((album, index) => `
+              <div class="album-card album-card--${album.theme}" data-album-index="${index}" aria-label="${album.box} ${album.name}">
+                <span class="album-card__frame">
+                  <span class="album-card__photo" aria-hidden="true"></span>
+                </span>
+              </div>`).join('')}
+          </div>
+          <div class="album-box-nav" aria-label="当前相册盒子">
+            <span class="album-box-arrow">◀</span>
+            <span class="album-box-label" id="albumBoxLabel">BOX SET 1</span>
+            <span class="album-box-arrow">▶</span>
+          </div>
+          <div class="album-select__hint" id="albumHint">摇杆 / B 切换 · A 确认</div>
+        </section>`;
+      renderAlbums();
+    }
+
+    function tiltJoy(dir) {
+      if (screenMode === 'albums') {
+        joyStick.style.transform = dir === 'left' ? 'rotate(-18deg)' : 'rotate(18deg)';
+        switchAlbum(dir === 'left' ? -1 : 1);
+        setTimeout(() => { joyStick.style.transform = 'rotate(0deg)'; }, 140);
+        return;
+      }
+      if (dir === 'left') {
+        joyStick.style.transform = 'rotate(-18deg)';
+        switchChoice(0);
+      } else {
+        joyStick.style.transform = 'rotate(18deg)';
+        switchChoice(1);
+      }
+      setTimeout(() => { joyStick.style.transform = 'rotate(0deg)'; }, 140);
+    }
+
+    function doConfirm() {
+      if (screenMode === 'albums') {
+        chooseAlbum();
+        return;
+      }
+      if (curChoice === 1) {
+        // 点了 NO，触发彩蛋并强制回跳 YES
+        audio.playError();
+        const activeToast = screenContent.querySelector('#eggToast');
+        activeToast?.classList.add('show');
+        clearTimeout(eggTimer);
+
+        setTimeout(() => {
+          switchChoice(0);
+        }, 180);
+
+        eggTimer = setTimeout(() => {
+          activeToast?.classList.remove('show');
+        }, 1600);
+      } else {
+        if (screenMode === 'invite-confirm') {
+          openInvitation();
+          return;
+        }
+        // 首页 YES：投币通关进入相册盒子选择
+        if (isTransitioning) return;
+        isTransitioning = true;
+        audio.playCoin();
+        transCurtain.classList.add('active');
+        setTimeout(() => {
+          screenContent.innerHTML = '';
+          loadAlbumSelector();
+          transCurtain.classList.remove('active');
+          isTransitioning = false;
+        }, 350);
+      }
+    }
+
+    // 实体摇杆触控
+    let startX = 0;
+    const joyZone = document.getElementById('joyZone');
+    joyZone.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+    joyZone.addEventListener('pointerup', (e) => {
+      const diff = e.clientX - startX;
+      if (diff < -10) tiltJoy('left');
+      else if (diff > 10) tiltJoy('right');
+      else tiltJoy(curChoice === 0 ? 'right' : 'left');
+    });
+
+    // 实体红色按键 A / B
+    function bindBtn(hitEl, fxEl, action) {
+      hitEl.addEventListener('pointerdown', () => {
+        fxEl.classList.add('pressed');
+        action();
+      });
+      hitEl.addEventListener('pointerup', () => fxEl.classList.remove('pressed'));
+      hitEl.addEventListener('pointerleave', () => fxEl.classList.remove('pressed'));
+      hitEl.addEventListener('pointercancel', () => fxEl.classList.remove('pressed'));
+    }
+
+    bindBtn(document.getElementById('hitA'), fxA, doConfirm);
+    bindBtn(document.getElementById('hitB'), fxB, () => {
+      if (screenMode === 'albums') switchAlbum(1);
+      else switchChoice(curChoice === 0 ? 1 : 0);
+    });
+
+  </script>
+</body>
+</html>
