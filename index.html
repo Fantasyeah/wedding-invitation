@@ -8,10 +8,14 @@
   <meta property="og:title" content="Van & Spot｜婚礼邀请函">
   <meta property="og:description" content="接受一场关于爱与相聚的特别委托。">
   <title>Van & Spot 婚礼邀请函</title>
+  <link rel="preload" href="./Cubic_11_1.010_R.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./arcade_frame_without_joystick.webp" as="image" type="image/webp">
   <style>
     @font-face {
       font-family: 'Cubic11';
-      src: url('./Cubic_11_1.010_R.ttf') format('truetype');
+      src: url('./Cubic_11_1.010_R.woff2') format('woff2'),
+           url('./Cubic_11_1.010_R.ttf') format('truetype');
+      font-display: swap;
     }
 
     * {
@@ -52,6 +56,10 @@
       width: 100%;
       height: 100%;
       background: url('./arcade_frame_without_joystick.png') no-repeat center center;
+      background-image: image-set(
+        url('./arcade_frame_without_joystick.webp') type('image/webp'),
+        url('./arcade_frame_without_joystick.png') type('image/png')
+      );
       background-size: 100% 100%;
       overflow: hidden;
       container-type: inline-size;
@@ -67,6 +75,10 @@
       border-radius: 2.27cqw;
       overflow: hidden;
       background: url('./screen_bg_start_sky.png') no-repeat center bottom;
+      background-image: image-set(
+        url('./screen_bg_start_sky.webp') type('image/webp'),
+        url('./screen_bg_start_sky.png') type('image/png')
+      );
       background-size: cover;
       display: flex;
       flex-direction: column;
@@ -79,6 +91,10 @@
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       background: url('./screen_bg_start_sky.png') no-repeat center top;
+      background-image: image-set(
+        url('./screen_bg_start_sky.webp') type('image/webp'),
+        url('./screen_bg_start_sky.png') type('image/png')
+      );
       background-size: cover;
       z-index: 1;
     }
@@ -239,9 +255,18 @@
       background-repeat: no-repeat;
     }
 
-    .album-card--one .album-card__photo { background-image: url('./df.png'); }
-    .album-card--two .album-card__photo { background-image: url('./xxy.png'); }
-    .album-card--three .album-card__photo { background-image: url('./3.png'); }
+    .album-card--one .album-card__photo {
+      background-image: url('./df.png');
+      background-image: image-set(url('./df.webp') type('image/webp'), url('./df.png') type('image/png'));
+    }
+    .album-card--two .album-card__photo {
+      background-image: url('./xxy.png');
+      background-image: image-set(url('./xxy.webp') type('image/webp'), url('./xxy.png') type('image/png'));
+    }
+    .album-card--three .album-card__photo {
+      background-image: url('./3.png');
+      background-image: image-set(url('./3.webp') type('image/webp'), url('./3.png') type('image/png'));
+    }
 
     .album-box-nav {
       position: relative;
@@ -595,9 +620,8 @@
     <iframe
       class="stardew-invitation-frame"
       id="stardewInvitationFrame"
-      src="./stardew-invitation/index.html"
+      data-src="./stardew-invitation/index.html"
       title="星露谷像素风婚礼邀请函"
-      loading="eager"
     ></iframe>
   </main>
 
@@ -890,8 +914,16 @@
     }
 
     const stardewInvitationFrame = document.getElementById('stardewInvitationFrame');
+    let invitationFrameStarted = false;
+
+    function ensureInvitationFrameLoaded() {
+      if (invitationFrameStarted) return;
+      invitationFrameStarted = true;
+      stardewInvitationFrame.src = stardewInvitationFrame.dataset.src;
+    }
 
     function syncInvitationFrame() {
+      if (!invitationFrameStarted) return;
       stardewInvitationFrame.contentWindow?.postMessage({ type: 'wedding-config', config: invitation }, '*');
     }
 
@@ -901,6 +933,7 @@
     });
 
     function loadAlbumSelector() {
+      ensureInvitationFrameLoaded();
       screenMode = 'albums';
       screenContent.innerHTML = `
         <section class="album-select" aria-label="相册盒子选择">
