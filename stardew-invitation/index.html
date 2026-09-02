@@ -106,6 +106,38 @@
         </div>
       </section>
 
+      <section class="rsvp story-section" id="rsvp">
+        <header class="section-heading reveal">
+          <span class="rsvp-alert" aria-hidden="true">!</span>
+          <p>RSVP QUEST</p>
+          <h2>赴约登记</h2>
+        </header>
+        <article class="rsvp-card reveal pop-in">
+          <div class="rsvp-card-title">
+            <strong>请告诉我们你的计划</strong>
+            <p data-content="rsvpMessage">请告诉我们你是否赴约，以便提前安排席位与住宿。</p>
+            <span class="rsvp-deadline">截止日期：<b data-content="rsvpDeadline">2026年10月31日</b></span>
+          </div>
+        </article>
+        <div class="rsvp-embed-shell reveal pop-in">
+          <div class="rsvp-embed-label">
+            <span>腾讯文档 · 婚礼赴约登记</span>
+            <small id="rsvp-load-status">表单将在滑到此处时加载</small>
+          </div>
+          <div class="rsvp-iframe-wrap">
+            <span class="rsvp-loader" aria-hidden="true"></span>
+            <iframe
+              id="rsvp-frame"
+              title="欢迎您参加我们的婚礼赴约登记表"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
+          </div>
+        </div>
+        <a class="pixel-button rsvp-external" data-content="rsvpLink" rel="noreferrer">打开腾讯文档填写</a>
+        <p class="rsvp-privacy" data-content="rsvpPrivacy">信息仅用于婚礼出席、住宿与联络安排，婚礼结束后删除。</p>
+      </section>
+
       <section class="ending" id="ending">
         <div class="ending-stars" aria-hidden="true">✦ · ✧ · ✦</div>
         <img class="ending-junimo" src="./assets/junimo.gif" alt="祝尼魔" loading="lazy" decoding="async" />
