@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wedding-invitation",
+  "compatibility_date": "2026-09-04",
+  "pages_build_output_dir": "dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wedding-invitation-rsvp",
+      "database_id": "aa214641-c9c9-41a2-88e4-7fea7f2c028f"
+    }
+  ]
+}

@@ -123,22 +123,63 @@
             <span class="rsvp-deadline">截止日期：<b data-content="rsvpDeadline">2026年10月31日</b></span>
           </div>
         </article>
-        <div class="rsvp-embed-shell reveal pop-in">
-          <div class="rsvp-embed-label">
-            <span>腾讯文档 · 婚礼赴约登记</span>
-            <small id="rsvp-load-status">表单将在滑到此处时加载</small>
+        <form class="rsvp-form reveal pop-in" id="rsvp-form" novalidate>
+          <div class="rsvp-fields">
+            <label class="rsvp-field">
+              <span>宾客姓名</span>
+              <input type="text" name="guest_name" maxlength="40" autocomplete="name" placeholder="你的名字" />
+            </label>
+
+            <fieldset class="rsvp-fieldset">
+              <legend>是否参加</legend>
+              <div class="rsvp-radio-row">
+                <label class="rsvp-radio"><input type="radio" name="attendance" value="attending" /><span>参加</span></label>
+                <label class="rsvp-radio"><input type="radio" name="attendance" value="declined" /><span>无法参加</span></label>
+              </div>
+            </fieldset>
+
+            <div class="rsvp-conditional" data-show="attending" hidden>
+              <label class="rsvp-field">
+                <span>出席人数</span>
+                <select name="party_size">
+                  <option value="1">1 人</option>
+                  <option value="2">2 人</option>
+                  <option value="3">3 人</option>
+                  <option value="4">4 人</option>
+                  <option value="5">5 人</option>
+                  <option value="6">6 人</option>
+                </select>
+              </label>
+              <label class="rsvp-field">
+                <span>是否需要住宿</span>
+                <select name="needs_accommodation">
+                  <option value="no">不需要</option>
+                  <option value="yes">需要</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="rsvp-field" data-show="accommodation" hidden>
+              <span>联系电话</span>
+              <input type="tel" name="phone" maxlength="30" autocomplete="tel" placeholder="需要住宿时请填写" />
+            </label>
+
+            <label class="rsvp-field">
+              <span>给新人的话（选填）</span>
+              <textarea name="message" maxlength="200" rows="3" placeholder="想说点什么？"></textarea>
+            </label>
           </div>
-          <div class="rsvp-iframe-wrap">
-            <span class="rsvp-loader" aria-hidden="true"></span>
-            <iframe
-              id="rsvp-frame"
-              title="欢迎您参加我们的婚礼赴约登记表"
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-            ></iframe>
-          </div>
+
+          <button type="submit" class="rsvp-submit" id="rsvp-submit">提交赴约登记</button>
+          <p class="rsvp-status" id="rsvp-status" aria-live="polite"></p>
+        </form>
+
+        <div class="rsvp-done reveal pop-in" id="rsvp-done" hidden>
+          <strong>登记成功 🎉</strong>
+          <p id="rsvp-done-summary">感谢你的答复！</p>
+          <button type="button" class="rsvp-edit-btn" id="rsvp-edit-btn">修改我的答复</button>
         </div>
-        <a class="pixel-button rsvp-external" data-content="rsvpLink" rel="noreferrer">打开腾讯文档填写</a>
+
         <p class="rsvp-privacy" data-content="rsvpPrivacy">信息仅用于婚礼出席、住宿与联络安排，婚礼结束后删除。</p>
       </section>
 
@@ -158,5 +199,6 @@
     <audio id="wedding-music" src="./assets/wedding-bgm.mp3" preload="none" loop></audio>
     <p id="audio-status" class="sr-only" aria-live="polite"></p>
     <script src="./app.js"></script>
+    <script src="./rsvp.js"></script>
   </body>
 </html>

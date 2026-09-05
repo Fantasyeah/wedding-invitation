@@ -10,7 +10,6 @@ const fallbackConfig = {
   venue: '请填写婚礼场地名称与地址',
   venueShort: '婚礼场地',
   navigationUrl: '',
-  rsvpFormUrl: '',
   rsvpDeadline: '婚礼前 14 天',
   rsvpMessage: '请告诉我们你是否赴约，以便提前安排席位与住宿。',
   rsvpPrivacy: '信息仅用于婚礼出席、住宿与联络安排，婚礼结束后删除。',
@@ -66,18 +65,7 @@ function renderConfig(config) {
         element.textContent = '地图链接待填写';
       }
     }
-    if (key === 'rsvpLink') {
-      if (weddingConfig.rsvpFormUrl) {
-        element.href = weddingConfig.rsvpFormUrl;
-        element.removeAttribute('aria-disabled');
-      } else {
-        element.removeAttribute('href');
-        element.setAttribute('aria-disabled', 'true');
-      }
-    }
   });
-
-  prepareRsvpFrame(weddingConfig.rsvpFormUrl);
 
   document.querySelector('[data-content="calendarMonth"]').textContent = weddingConfig.calendarMonth;
   document.querySelector('[data-content="calendarDay"]').textContent = weddingConfig.calendarDay;
@@ -96,40 +84,6 @@ function renderConfig(config) {
   const days = target && !Number.isNaN(target.getTime()) ? Math.max(0, Math.ceil((target.getTime() - Date.now()) / 86400000)) : '--';
   document.querySelector('#days-count').textContent = String(days);
 }
-
-const rsvpFrame = document.querySelector('#rsvp-frame');
-const rsvpSection = document.querySelector('#rsvp');
-const rsvpLoadStatus = document.querySelector('#rsvp-load-status');
-let rsvpFrameStarted = false;
-
-function prepareRsvpFrame(url) {
-  if (!rsvpFrame || !url || rsvpFrameStarted) return;
-  rsvpFrame.dataset.src = url;
-  const loadFrame = () => {
-    if (rsvpFrameStarted) return;
-    rsvpFrameStarted = true;
-    rsvpFrame.classList.add('is-loading');
-    rsvpLoadStatus.textContent = '正在加载表单…';
-    rsvpFrame.src = rsvpFrame.dataset.src;
-  };
-
-  if ('IntersectionObserver' in window) {
-    const rsvpObserver = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      rsvpObserver.disconnect();
-      loadFrame();
-    }, { rootMargin: '480px 0px' });
-    rsvpObserver.observe(rsvpSection);
-  } else {
-    loadFrame();
-  }
-}
-
-rsvpFrame?.addEventListener('load', () => {
-  rsvpFrame.classList.remove('is-loading');
-  rsvpFrame.classList.add('is-loaded');
-  rsvpLoadStatus.textContent = '若无法填写，请使用下方按钮打开';
-});
 
 document.querySelectorAll('[data-scroll]').forEach((button) => {
   button.addEventListener('click', () => document.querySelector(button.dataset.scroll)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
